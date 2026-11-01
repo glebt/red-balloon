@@ -25,5 +25,9 @@ class Settings(BaseSettings):
     photos_dir: str = "./photos"
     max_upload_size: int = 10 * 1024 * 1024  # 10MB
 
+    # Data files
+    data_file: str = "env/data/2019_photos.json"  # Use 2019 for faster dev/testing
+    all_photos_file: str = "env/data/all_photos.json"  # Full dataset
+
 
 settings = Settings()
