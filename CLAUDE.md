@@ -12,14 +12,37 @@ Red Balloon is an AI-powered Python application for exploring and understanding 
 
 ## Development Setup
 
+### Prerequisites
+Install [uv](https://docs.astral.sh/uv/) - an extremely fast Python package manager:
+```bash
+# macOS/Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Or with Homebrew
+brew install uv
+
+# Windows
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
 ### Initial Setup
 ```bash
-# Create and activate virtual environment
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+# Install all dependencies and create virtual environment
+uv sync
+```
 
-# Install dependencies
-make install-dev
+uv automatically:
+- Detects Python version from `.python-version` (3.11)
+- Creates `.venv/` virtual environment
+- Installs production dependencies from `[project] dependencies`
+- Installs dev dependencies from `[tool.uv] dev-dependencies`
+- Generates/updates `uv.lock` for reproducible builds
+
+### Manual Virtual Environment Activation (Optional)
+```bash
+# uv run handles activation automatically, but if needed:
+source .venv/bin/activate  # macOS/Linux
+.venv\Scripts\activate     # Windows
 ```
 
 ### Environment Configuration
@@ -36,24 +59,59 @@ Optional variables in `src/red_balloon/config.py`:
 
 ## Common Commands
 
-### Development
-- `make run` - Start development server with auto-reload
-- `make test` - Run test suite
-- `make test-cov` - Run tests with coverage report (generates htmlcov/)
-- `make lint` - Check code style and linting issues
-- `make format` - Auto-format code with ruff
-- `make type-check` - Run mypy type checking
+Uses Makefile as a task runner with uv for dependency management. Run `make help` to see all available commands.
 
-### Running Single Tests
+### Development Tasks
+```bash
+# Run tests
+make test
+
+# Run tests with coverage report (generates htmlcov/)
+make test-cov
+
+# Check code style and linting
+make lint
+
+# Auto-format code
+make format
+
+# Run type checking
+make type-check
+
+# Start development server
+make serve
+# Or use the CLI entry point directly
+uv run red-balloon
+```
+
+### Running Specific Tests
 ```bash
 # Run specific test file
-pytest tests/test_main.py
+uv run pytest tests/test_main.py
 
 # Run specific test function
-pytest tests/test_main.py::test_root_endpoint
+uv run pytest tests/test_main.py::test_root_endpoint
 
 # Run with verbose output
-pytest -v tests/test_main.py
+uv run pytest -v
+```
+
+### Dependency Management
+```bash
+# Sync all dependencies (run after clone or pyproject.toml changes)
+uv sync
+
+# Add a new production dependency
+uv add <package-name>
+
+# Add a dev dependency  
+uv add --dev <package-name>
+
+# Update all dependencies
+uv sync --upgrade
+
+# Remove a dependency
+uv remove <package-name>
 ```
 
 ## Architecture

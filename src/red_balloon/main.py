@@ -34,7 +34,8 @@ async def health() -> dict[str, str]:
     return {"status": "healthy"}
 
 
-if __name__ == "__main__":
+def main() -> None:
+    """Run the application server."""
     import uvicorn
 
     uvicorn.run(
@@ -43,3 +44,7 @@ if __name__ == "__main__":
         port=settings.port,
         reload=settings.debug,
     )
+
+
+if __name__ == "__main__":
+    main()
