@@ -65,6 +65,38 @@ async def get_photos_by_camera(camera: str) -> list[PhotoMetadata]:
         ) from e
 
 
+@router.get("/years")
+async def get_available_years() -> list[int]:
+    """Get list of all available years in the gallery."""
+    try:
+        photos = photo_service.load_photos()
+        years = sorted({p.get_year() for p in photos if p.get_year()})
+        return years
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Error fetching years: {str(e)}"
+        ) from e
+
+
+@router.get("/cameras")
+async def get_available_cameras() -> dict[str, int]:
+    """Get list of all cameras with photo counts."""
+    try:
+        photos = photo_service.load_photos()
+        cameras: dict[str, int] = {}
+        for photo in photos:
+            if photo.make or photo.model:
+                camera_name = f"{photo.make} {photo.model}".strip()
+                cameras[camera_name] = cameras.get(camera_name, 0) + 1
+
+        # Sort by count (descending)
+        return dict(sorted(cameras.items(), key=lambda x: x[1], reverse=True))
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Error fetching cameras: {str(e)}"
+        ) from e
+
+
 @router.get("/info")
 async def get_data_info() -> dict[str, str]:
     """Get information about the loaded dataset."""
